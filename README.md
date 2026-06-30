@@ -72,7 +72,7 @@ Reanalysis of Rothman et al. wastewater metatranscriptomic data using a reproduc
 └── docs/
 ```
 
-The workflow uses a top-level `Snakefile` plus modular rule files under `workflow/rules/`, which is a standard way to keep larger Snakemake workflows readable and extensible. [web:220][web:201]
+The workflow uses a top-level `Snakefile` plus modular rule files under `workflow/rules/`, which is a standard way to keep larger Snakemake workflows readable and extensible.
 
 ## Sample manifest
 
