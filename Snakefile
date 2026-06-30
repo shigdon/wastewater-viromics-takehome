@@ -9,5 +9,4 @@ rule all:
     input:
         expand("results/qc/fastp/{sample}.html", sample=SAMPLES),
         expand("results/qc/fastp/{sample}.json", sample=SAMPLES),
-        expand("data/deduped/htp/{sample}_R1.deduped.fastq.gz", sample=SAMPLES),
-        expand("data/deduped/htp/{sample}_R2.deduped.fastq.gz", sample=SAMPLES)
+        expand("data/deduped/htp/{sample}.deduped.fastq.gz", sample=SAMPLES)

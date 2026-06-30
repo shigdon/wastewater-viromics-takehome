@@ -41,7 +41,8 @@ data/tmp/
 *.bai
 
 # Results: ignore intermediates, keep final deliverables
-results/intermediate/
+results/qc/fastp/*.html
+results/qc/fastp/*.json
 
 # Misc
 *.log
