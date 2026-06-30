@@ -1,0 +1,10 @@
+name: r-metadata
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base
+  - r-readr
+  - r-dplyr
+  - r-stringr
+  - r-lubridate

@@ -1,0 +1,34 @@
+name: r-analysis
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base
+  - r-tidyverse
+  - r-readr
+  - r-dplyr
+  - r-tidyr
+  - r-stringr
+  - r-purrr
+  - r-tibble
+  - r-ggplot2
+  - r-forcats
+  - r-lubridate
+  - r-scales
+  - r-patchwork
+  - r-cowplot
+  - r-janitor
+  - r-vegan
+  - r-ape
+  - r-phyloseq
+  - bioconductor-biocgenerics
+  - bioconductor-biostrings
+  - bioconductor-genomicalignments
+  - bioconductor-rsamtools
+  - bioconductor-genomicranges
+  - bioconductor-iranges
+  - bioconductor-s4vectors
+  - r-rmarkdown
+  - r-knitr
+  - r-bookdown
+  - pandoc

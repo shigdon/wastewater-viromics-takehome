@@ -1,0 +1,7 @@
+name: bbtools
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - bbmap
+  - pigz

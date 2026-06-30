@@ -1,0 +1,11 @@
+bioproject: "PRJNA729801"
+site_pattern: "HTP"
+
+project: wastewater-viromics-takehome
+
+paths:
+  sample_sheet: config/samples_htp.csv
+  raw_dir: data/raw/htp
+
+download:
+  threads: 8

@@ -1,0 +1,34 @@
+# Global default: Let Git auto-detect text files
+* text=auto
+
+# Explicitly force LF line endings for all code, scripts, and configs
+*.Rmd text eol=lf
+*.qmd text eol=lf
+*.R text eol=lf
+*.py text eol=lf
+*.ipynb text eol=lf
+*.smk text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.tsv text eol=lf
+*.csv text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Explicitly treat images, documents, and heavy genomic/binary assets as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.gz binary
+*.bam binary
+*.bai binary
+*.fastq binary
+*.fq binary
+*.xlsx binary
+
