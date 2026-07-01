@@ -8,6 +8,17 @@ paths:
   sample_sheet: config/samples_htp.csv
   raw_dir: data/raw/htp
   host_reference: resources/host/human/GRCh38.primary_assembly.genome.fa.gz
+  kraken_db: ../db/k2_std
+  bracken_db: ../db/k2_std
 
 download:
   threads: 8
+
+downsampling:
+  target_bases: 10000000
+  seed: 42
+
+taxonomy:
+  kraken_threads: 12
+  bracken_read_length: 150
+  bracken_levels: ["G", "S"]

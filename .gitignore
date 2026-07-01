@@ -46,6 +46,13 @@ resources/host/human/
 # Results: ignore intermediates, keep final deliverables
 results/qc/fastp/*.html
 results/qc/fastp/*.json
+results/taxonomy/kraken2/*.report.txt
+results/taxonomy/kraken2/*.kraken.txt
+results/taxonomy/bracken/*.G.bracken.tsv
+results/taxonomy/bracken/*.S.bracken.tsv
+results/taxonomy/bracken/*.G.bracken.report
+results/taxonomy/bracken/*.S.bracken.report
+results/taxonomy/merged/*_counts.tsv
 
 # Misc
 *.log

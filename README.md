@@ -146,6 +146,24 @@ The workflow operates on a curated set of 10 HTP libraries represented in `confi
 
 The workflow is intended to be run with Snakemake and rule-specific software environments. The final report reads workflow outputs from the `results/` directory rather than recomputing raw preprocessing inline, which keeps the narrative report clean and reproducible. Snakemake’s modular workflow structure and per-rule environment support are designed for this style of reproducible analysis.
 
+## Taxonomic classification and databases
+
+Taxonomic classification of host-filtered metatranscriptomic reads is performed with
+Kraken2 followed by Bracken for abundance estimation.
+
+For this take-home, I used the **Kraken2 standard database** provided via the Genome
+Index Zone:
+
+- Source: https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20260226.tar.gz
+- Contents: RefSeq archaea, bacteria, viruses, plasmids, human, UniVec_Core
+- Local path (configured in `config/config.yaml`):
+  - `paths.kraken_db`: /path/to/k2_standard_20260226
+  - `paths.bracken_db`: /path/to/k2_standard_20260226
+- Bracken read length: 150 bp (assuming 2×150 bp Illumina paired-end reads)
+
+This choice provides a recent, prebuilt, widely used metagenomic reference suitable
+for efficient taxonomic profiling of wastewater RNA virome data.
+
 ## Planned commands
 
 ### Dry run

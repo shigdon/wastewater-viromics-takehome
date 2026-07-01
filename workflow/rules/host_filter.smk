@@ -35,8 +35,8 @@ rule index_host_reference_bwa:
 
 rule host_filter_bwa:
     input:
-        r1="data/deduped_split/htp/{sample}_R1.deduped.fastq.gz",
-        r2="data/deduped_split/htp/{sample}_R2.deduped.fastq.gz",
+        r1="data/downsampled/htp/{sample}_R1.downsampled.fastq.gz",
+        r2="data/downsampled/htp/{sample}_R2.downsampled.fastq.gz",
         fasta=config["paths"]["host_reference"],
         amb=config["paths"]["host_reference"] + ".amb",
         ann=config["paths"]["host_reference"] + ".ann",
