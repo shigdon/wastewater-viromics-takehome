@@ -8,6 +8,7 @@ include: "workflow/rules/reformat.smk"
 include: "workflow/rules/downsample.smk"
 include: "workflow/rules/host_filter.smk"
 include: "workflow/rules/taxonomy.smk"
+include: "workflow/rules/sars_cov2.smk"
 include: "workflow/rules/report.smk"
 
 rule all:

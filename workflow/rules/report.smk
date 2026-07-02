@@ -60,6 +60,7 @@ rule render_takehome_notebook:
         host="results/summary/host_filter_summary.tsv",
         species="results/taxonomy/merged/bracken_species_counts.tsv",
         viral="results/summary/viral_taxa_summary.tsv",
+        sars="results/summary/sars_cov2_alignment_summary.tsv",
         notebook="workflow/notebooks/takehome_wastewater_viromics.ipynb"
     output:
         notebook="results/notebooks/takehome_wastewater_viromics.executed.ipynb",

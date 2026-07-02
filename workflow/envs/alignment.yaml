@@ -1,0 +1,8 @@
+name: alignment
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bwa
+  - samtools
+  - bcftools

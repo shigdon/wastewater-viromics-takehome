@@ -54,6 +54,8 @@ results/taxonomy/bracken/*.G.bracken.report
 results/taxonomy/bracken/*.S.bracken.report
 results/taxonomy/merged/*_counts.tsv
 results/summary/*.tsv
+results/sars_cov2/
+
 
 # Misc
 *.log
