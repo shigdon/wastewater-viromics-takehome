@@ -99,21 +99,25 @@ rule merge_sars_cov2_stats:
 
 
 # Optional variant calling rule (commented out until coverage supports it)
-#rule call_sars_cov2_variants:
-#    input:
-#        fa="resources/reference/sars_cov2/NC_045512.2.fa",
-#        bam="results/sars_cov2/alignment/{sample}.sorted.bam"
-#    output:
-#        vcf="results/sars_cov2/variants/{sample}.vcf.gz",
-#        tbi="results/sars_cov2/variants/{sample}.vcf.gz.tbi"
-#    conda:
-#        "../envs/alignment.yaml"
-#    shell:
-#        r"""
-#        mkdir -p results/sars_cov2/variants
-#
-#        bcftools mpileup -Ou -f {input.fa} {input.bam} \
-#          | bcftools call -mv -Oz -o {output.vcf}
-#
-#        bcftools index -t {output.vcf}
-#        """
+# workflow/rules/sars_cov2.smk
+# added single input based on prior analysis showing only one sample with sufficient coverage for variant calling
+
+rule call_sars_cov2_variants_single:
+    input:
+        fa="resources/reference/sars_cov2/NC_045512.2.fa",
+        bam="results/sars_cov2/alignment/HTP_2020-12-22_enriched.sorted.bam"
+    output:
+        vcf="results/sars_cov2/variants/HTP_2020-12-22_enriched.vcf.gz",
+        tbi="results/sars_cov2/variants/HTP_2020-12-22_enriched.vcf.gz.tbi"
+    conda:
+        "../envs/alignment.yaml"   # must include bcftools
+    threads: 2
+    shell:
+        r"""
+        mkdir -p results/sars_cov2/variants
+
+        bcftools mpileup -Ou -f {input.fa} {input.bam} \
+          | bcftools call -mv -Oz -o {output.vcf}
+
+        bcftools index -t {output.vcf}
+        """

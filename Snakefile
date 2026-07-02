@@ -13,13 +13,21 @@ include: "workflow/rules/report.smk"
 
 rule all:
     input:
-        expand("results/qc/fastp/{sample}.html", sample=SAMPLES),
-        expand("results/qc/fastp/{sample}.json", sample=SAMPLES),
-        expand("data/host_filtered/htp/{sample}_R1.host_filtered.fastq.gz", sample=SAMPLES),
-        expand("data/host_filtered/htp/{sample}_R2.host_filtered.fastq.gz", sample=SAMPLES),
-        expand("results/taxonomy/kraken2/{sample}.report.txt", sample=SAMPLES),
-        expand("results/taxonomy/kraken2/{sample}.kraken.txt", sample=SAMPLES),
-        expand("results/taxonomy/bracken/{sample}.G.bracken.tsv", sample=SAMPLES),
-        expand("results/taxonomy/bracken/{sample}.S.bracken.tsv", sample=SAMPLES),
+        # QC summary products
+        "results/summary/sample_metadata.tsv",
+        "results/summary/qc_summary.tsv",
+        "results/summary/host_filter_summary.tsv",
+
+        # Taxonomy merged outputs used in notebook
         "results/taxonomy/merged/bracken_genus_counts.tsv",
-        "results/taxonomy/merged/bracken_species_counts.tsv"
+        "results/taxonomy/merged/bracken_species_counts.tsv",
+
+        # Viral summary outputs
+        "results/summary/viral_taxa_summary.tsv",
+
+        # SARS-CoV-2 summary output
+        "results/summary/sars_cov2_alignment_summary.tsv",
+
+        # Final rendered notebook deliverables
+        "results/notebooks/takehome_wastewater_viromics.executed.ipynb",
+        "reports/takehome_wastewater_viromics.html"

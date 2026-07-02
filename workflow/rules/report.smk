@@ -72,6 +72,7 @@ rule render_takehome_notebook:
     shell:
         r"""
         mkdir -p results/notebooks reports logs/report
+        : > {log}
 
         jupyter nbconvert \
           --to notebook \
