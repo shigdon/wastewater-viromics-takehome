@@ -1,170 +1,189 @@
 # Wastewater viromics take-home
 
-Reanalysis of Rothman et al. wastewater metatranscriptomic data using a reproducible Snakemake workflow and an R Markdown report. The project focuses on QC, host filtering, taxonomic composition, viral relative abundance, and SARS-CoV-2 SNV exploration across enriched and unenriched samples. The workflow is organized so that Snakemake performs the end-to-end computation, while the final report assembles workflow outputs into a biological narrative.
+Reanalysis of a subset of Rothman et al. wastewater metatranscriptomic data using a reproducible Snakemake workflow and a rendered Jupyter notebook report. The project focuses on QC, host filtering, taxonomic composition, viral relative abundance, and exploratory SARS-CoV-2 reference-based analysis across enriched and unenriched samples from a single wastewater treatment plant.
 
 ## Objectives
 
 - Reproduce an end-to-end metatranscriptomic analysis workflow on a selected subset of wastewater samples.
 - Compare enriched and unenriched libraries across consecutive dates from a single wastewater treatment plant.
 - Generate plots and biological interpretations for each required analysis step.
-- Present one multiple-choice question per step that captures the main scientific takeaway.
+- Present one biologically focused multiple-choice question per analysis step.
 
 ## Deliverables
 
-- Runnable workflow codebase.
-- R Markdown report with analysis, implementation details, plots, and MCQs.
-- Static HTML report.
+- Runnable Snakemake workflow.
+- Jupyter notebook containing analysis, plots, interpretation, and MCQs.
+- Static HTML report rendered from the executed notebook.
 
 ## Repository structure
 
 ```text
 .
+├── config
+│   ├── config.yaml
+│   └── samples_htp.csv
+├── metadata
+│   ├── PRJNA729801_htp_.all.runinfo.csv
+│   ├── PRJNA729801_htp_.filtered.csv
+│   ├── PRJNA729801_htp_.filtered.runinfo.csv
+│   ├── PRJNA729801_htp_.filtered.tsv
+│   └── PRJNA729801_htp_.summary.txt
+├── misc
+│   └── workflow_rulegraph.svg
 ├── README.md
-├── .gitattributes
-├── .gitignore
+├── repo_tree.txt
+├── reports
+│   └── takehome_wastewater_viromics.html
+├── resources
+│   └── reference
+│       └── sars_cov2
+│           ├── NC_045512.2.fa
+│           ├── NC_045512.2.fa.amb
+│           ├── NC_045512.2.fa.ann
+│           ├── NC_045512.2.fa.bwt
+│           ├── NC_045512.2.fa.fai
+│           ├── NC_045512.2.fa.pac
+│           └── NC_045512.2.fa.sa
+├── results
+│   └── notebooks
+│       └── takehome_wastewater_viromics.executed.ipynb
 ├── Snakefile
-├── config/
-│   ├── config.yaml
-│   └── samples_htp.csv
-├── metadata/
-│   └── PRJNA729801_htp_.filtered.csv
-├── scripts/
-│   ├── fetch_sra_runinfo_htp.sh
-│   └── make_samples_htp.R
-├── workflow/
-│   ├── rules/
-│   │   ├── common.smk
-│   │   ├── download.smk
-│   │   ├── qc.smk
-│   │   ├── host_filter.smk
-│   │   ├── taxonomy.smk
-│   │   ├── viral_abundance.smk
-│   │   ├── snv.smk
-│   │   └── report.smk
-│   └── envs/
-│       ├── sra-tools.yaml
-│       ├── fastp.yaml
-│       ├── bowtie2.yaml
-│       ├── kraken2.yaml
-│       ├── samtools.yaml
-│       ├── r_analysis.yaml
-│       └── quarto.yaml
-├── analysis/
-│   ├── wastewater_viromics_report.Rmd
-│   └── styles.css
-├── resources/
-│   ├── references/
-│   └── genomes/
-├── data/
-│   ├── raw/
-│   │   └── htp/
-│   ├── trimmed/
-│   └── host_filtered/
-├── results/
-│   ├── qc/
-│   ├── host_filter/
-│   ├── taxonomy/
-│   ├── viral/
-│   ├── snv/
-│   ├── tables/
-│   ├── figures/
-│   └── report/
-└── docs/
+└── workflow
+    ├── envs
+    │   ├── alignment.yaml
+    │   ├── bbtools.yaml
+    │   ├── bwa.yaml
+    │   ├── fastp.yaml
+    │   ├── kraken.yaml
+    │   ├── python_report.yaml
+    │   ├── r_analysis.yaml
+    │   ├── r_metadata.yaml
+    │   └── sra-tools.yaml
+    ├── notebooks
+    │   └── takehome_wastewater_viromics.ipynb
+    ├── rules
+    │   ├── common.smk
+    │   ├── dedupe.smk
+    │   ├── download.smk
+    │   ├── downsample.smk
+    │   ├── host_filter.smk
+    │   ├── metadata.smk
+    │   ├── qc.smk
+    │   ├── reformat.smk
+    │   ├── report.smk
+    │   ├── sars_cov2.smk
+    │   └── taxonomy.smk
+    └── scripts
+        ├── get_sra_runs.sh
+        ├── make_sample_metadata.py
+        ├── make_samples_htp.R
+        ├── merge_bracken.py
+        ├── merge_sars_cov2_stats.py
+        ├── summarize_host_filter.py
+        ├── summarize_qc.py
+        ├── summarize_sample_metadata.py
+        └── summarize_viral_taxa.py
+
+15 directories, 50 files
+
 ```
 
-The workflow uses a top-level `Snakefile` plus modular rule files under `workflow/rules/`, which is a standard way to keep larger Snakemake workflows readable and extensible.
+The workflow uses a top-level `Snakefile` and modular rule files under `workflow/rules/` so that each major analysis step is explicit, inspectable, and reproducible.
 
-## Sample manifest
+## Samples
 
-The workflow treats `config/samples_htp.csv` as the single source of truth for sample-level metadata. This follows the conventional Snakemake pattern of using a tabular sample sheet as workflow configuration rather than generating the manifest dynamically during a standard run.
+The analysis uses a curated subset of 10 libraries from the HTP site, representing 5 consecutive date pairs with matched enriched and unenriched samples. The committed sample manifest at `config/samples_htp.csv` is the single source of truth for workflow execution and downstream analysis.
 
-The sample sheet contains the selected 5 enriched/unenriched HTP date pairs and includes the metadata needed for both workflow execution and downstream analysis:
+The sample sheet includes sample-level metadata used throughout the workflow, including:
 
-- `sample_id`
-- `site`
-- `date`
-- `treatment`
-- `matrix`
-- `srr`
-- `biosample`
-- `library_strategy`
-- `library_source`
-- `layout`
+- sample name
+- site
+- collection date
+- treatment / enrichment status
+- SRA accession
+- library metadata needed for download and interpretation
 
-## How the sample sheet was generated
+## Sample manifest provenance
 
-Although `config/samples_htp.csv` is committed to the repository and used directly by Snakemake, its provenance is fully documented.
+Although `config/samples_htp.csv` is committed and used directly by Snakemake, its provenance is documented in the repository.
 
-The sample sheet was generated in two steps:
+1. `scripts/fetch_sra_runinfo_htp.sh` fetches and filters SRA run metadata for the HTP subset.
+2. `scripts/make_samples_htp.R` parses sample names, extracts date and treatment information, identifies matched enriched/unenriched pairs, and writes the final curated manifest.
 
-1. **Fetch HTP-specific SRA metadata**  
-   Script: `workflow/scripts/fetch_sra_runinfo_htp.sh`  
-   Output: `metadata/PRJNA729801_htp_.filtered.csv`
+These helper scripts are included for transparency but are not required for a standard workflow run because the final sample manifest is already present.
 
-   This script queries SRA/RunInfo metadata for BioProject PRJNA729801 and filters rows to HTP samples.
+## Workflow overview
 
-2. **Parse and curate the final sample manifest**  
-   Script: `workflow/scripts/make_samples_htp.R`  
-   Input: `metadata/PRJNA729801_htp_.filtered.csv`  
-   Output: `config/samples_htp.csv`
+The pipeline is organized into the following major stages:
 
-   This script parses HTP sample names, infers date and treatment, identifies matched enriched/unenriched HTP pairs, and writes the final curated 10-sample manifest used by the workflow.
+1. **Download**
+   - Download raw sequencing data for the selected SRR accessions.
 
-These scripts are included for transparency and reproducibility, but they are not required for a standard pipeline run because the resulting sample sheet is already present in the repository.
+2. **QC and preprocessing**
+   - Adapter and quality trimming.
+   - Deduplication / duplicate handling.
+   - FASTQ reformatting and standardization.
+   - Downsampling to the target depth.
 
-## Analysis overview
+3. **Host filtering**
+   - Removal of host-associated reads before downstream metatranscriptomic analysis.
 
-### 1. QC
+4. **Taxonomic profiling**
+   - Classification with Kraken2.
+   - Abundance estimation with Bracken.
+   - Merged genus- and species-level abundance tables across samples.
 
-- Adapter and quality trimming.
-- Summary of read retention and quality metrics.
-- Plots and interpretation of sequencing quality across selected samples.
+5. **Viral summary analysis**
+   - Viral relative abundance summaries derived from the merged taxonomy outputs.
+   - Comparison of enriched and unenriched libraries across timepoints.
 
-### 2. Host filtering
+6. **SARS-CoV-2 reference-based follow-up**
+   - Alignment of host-filtered reads to the SARS-CoV-2 reference genome.
+   - Summary of mapped reads, mean depth, and genome breadth.
+   - Exploratory single-sample SNV calling for the strongest enriched sample.
 
-- Removal of host-associated reads.
-- Summary of reads removed versus retained.
-- Interpretation of how host filtering affects downstream viromic analysis.
+7. **Notebook rendering**
+   - Execution of the final Jupyter notebook with `nbconvert`.
+   - Rendering of the executed notebook to static HTML.
 
-### 3. Taxonomic composition and viral relative abundance
+## Final outputs
 
-- Viral read assignment and abundance table generation.
-- Comparison of enriched versus unenriched libraries.
-- Alpha diversity, beta diversity, and relative abundance visualizations.
+The most important final outputs are:
 
-### 4. SARS-CoV-2 SNVs
-
-- Coverage and breadth assessment for SARS-CoV-2.
-- Variant calling and filtering for interpretable SNV analysis.
-- Time-resolved SNV summaries for samples with sufficient coverage.
+- `results/summary/sample_metadata.tsv`
+- `results/summary/qc_summary.tsv`
+- `results/summary/host_filter_summary.tsv`
+- `results/taxonomy/merged/bracken_genus_counts.tsv`
+- `results/taxonomy/merged/bracken_species_counts.tsv`
+- `results/summary/viral_taxa_summary.tsv`
+- `results/summary/sars_cov2_alignment_summary.tsv`
+- `results/notebooks/takehome_wastewater_viromics.executed.ipynb`
+- `reports/takehome_wastewater_viromics.html`
 
 ## Data
 
-The workflow operates on a curated set of 10 HTP libraries represented in `config/samples_htp.csv`. Raw FASTQ files for these libraries are downloaded from the SRA at runtime using the SRR accessions in that manifest. Large raw inputs and heavy intermediates (e.g. `data/raw/htp/`, `data/sra/`, and `data/tmp/`) are not tracked in Git, keeping the repository lightweight while preserving full reproducibility of sample selection and download.
-
-## Reproducibility
-
-The workflow is intended to be run with Snakemake and rule-specific software environments. The final report reads workflow outputs from the `results/` directory rather than recomputing raw preprocessing inline, which keeps the narrative report clean and reproducible. Snakemake’s modular workflow structure and per-rule environment support are designed for this style of reproducible analysis.
+The workflow operates on a curated set of HTP libraries defined in `config/samples_htp.csv`. Raw sequencing files are downloaded from SRA at runtime using the accessions in that manifest. Large raw inputs and heavy intermediates are not intended to be tracked in Git, keeping the repository lightweight while preserving reproducibility of sample selection and workflow execution.
 
 ## Taxonomic classification and databases
 
-Taxonomic classification of host-filtered metatranscriptomic reads is performed with
-Kraken2 followed by Bracken for abundance estimation.
+Taxonomic classification of host-filtered reads is performed with Kraken2 followed by Bracken for abundance estimation.
 
-For this take-home, I used the **Kraken2 standard database** provided via the Genome
-Index Zone:
+The workflow expects paths to the Kraken2 / Bracken database to be configured in `config/config.yaml`. In the completed analysis, a standard Kraken2 database was used for broad metatranscriptomic classification, with Bracken used to summarize abundance at genus and species level.
 
-- Source: https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20260226.tar.gz
-- Contents: RefSeq archaea, bacteria, viruses, plasmids, human, UniVec_Core
-- Local path (configured in `config/config.yaml`):
-  - `paths.kraken_db`: /path/to/k2_standard_20260226
-  - `paths.bracken_db`: /path/to/k2_standard_20260226
-- Bracken read length: 150 bp (assuming 2×150 bp Illumina paired-end reads)
+Because large reference databases are external to the repository, they are configured by path rather than committed to Git.
 
-This choice provides a recent, prebuilt, widely used metagenomic reference suitable
-for efficient taxonomic profiling of wastewater RNA virome data.
+## Reproducibility
 
-## Planned commands
+All preprocessing, summarization, and report generation are orchestrated with **Snakemake**. The final notebook reads workflow outputs from the `results/summary/` and `results/taxonomy/merged/` directories rather than recomputing preprocessing inline, which keeps the report modular and reproducible.
+
+The repository includes:
+
+- rule-specific Conda environments under `workflow/envs/`,
+- modular Snakemake rules under `workflow/rules/`,
+- helper scripts for summary-table generation under `workflow/scripts/`,
+- and a final notebook that can be executed interactively or rendered non-interactively through Snakemake.
+
+## Running the workflow
 
 ### Dry run
 
@@ -178,12 +197,12 @@ snakemake -n
 snakemake --use-conda --cores 8
 ```
 
-### Render the report only
+### Render the final notebook report only
 
 ```bash
-Rscript -e "rmarkdown::render('analysis/wastewater_viromics_report.Rmd', output_file='wastewater_viromics_report.html', output_dir='results/report')"
+snakemake --use-conda --cores 2 reports/takehome_wastewater_viromics.html
 ```
 
 ## Notes for reviewers
 
-This repository is organized so that each major analysis step produces inspectable outputs. The committed sample sheet provides a stable and reviewable record of the selected libraries, while the included helper scripts document exactly how that manifest was derived from SRA metadata. The R Markdown report then assembles workflow outputs into a stepwise narrative with implementation details, plots, and a biologically focused MCQ for each stage.
+This repository is organized so that each major analysis step produces inspectable outputs and summary tables. The committed sample sheet provides a stable and reviewable record of the selected libraries, while the helper scripts document how that manifest was derived from SRA metadata. The final notebook assembles workflow outputs into a stepwise biological narrative with plots, interpretation, and one biologically focused MCQ per analysis section.

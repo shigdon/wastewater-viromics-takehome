@@ -1,0 +1,67 @@
+.
+├── config
+│   ├── config.yaml
+│   └── samples_htp.csv
+├── metadata
+│   ├── PRJNA729801_htp_.all.runinfo.csv
+│   ├── PRJNA729801_htp_.filtered.csv
+│   ├── PRJNA729801_htp_.filtered.runinfo.csv
+│   ├── PRJNA729801_htp_.filtered.tsv
+│   └── PRJNA729801_htp_.summary.txt
+├── misc
+│   └── workflow_rulegraph.svg
+├── README.md
+├── repo_tree.txt
+├── reports
+│   └── takehome_wastewater_viromics.html
+├── resources
+│   └── reference
+│       └── sars_cov2
+│           ├── NC_045512.2.fa
+│           ├── NC_045512.2.fa.amb
+│           ├── NC_045512.2.fa.ann
+│           ├── NC_045512.2.fa.bwt
+│           ├── NC_045512.2.fa.fai
+│           ├── NC_045512.2.fa.pac
+│           └── NC_045512.2.fa.sa
+├── results
+│   └── notebooks
+│       └── takehome_wastewater_viromics.executed.ipynb
+├── Snakefile
+└── workflow
+    ├── envs
+    │   ├── alignment.yaml
+    │   ├── bbtools.yaml
+    │   ├── bwa.yaml
+    │   ├── fastp.yaml
+    │   ├── kraken.yaml
+    │   ├── python_report.yaml
+    │   ├── r_analysis.yaml
+    │   ├── r_metadata.yaml
+    │   └── sra-tools.yaml
+    ├── notebooks
+    │   └── takehome_wastewater_viromics.ipynb
+    ├── rules
+    │   ├── common.smk
+    │   ├── dedupe.smk
+    │   ├── download.smk
+    │   ├── downsample.smk
+    │   ├── host_filter.smk
+    │   ├── metadata.smk
+    │   ├── qc.smk
+    │   ├── reformat.smk
+    │   ├── report.smk
+    │   ├── sars_cov2.smk
+    │   └── taxonomy.smk
+    └── scripts
+        ├── get_sra_runs.sh
+        ├── make_sample_metadata.py
+        ├── make_samples_htp.R
+        ├── merge_bracken.py
+        ├── merge_sars_cov2_stats.py
+        ├── summarize_host_filter.py
+        ├── summarize_qc.py
+        ├── summarize_sample_metadata.py
+        └── summarize_viral_taxa.py
+
+15 directories, 50 files
