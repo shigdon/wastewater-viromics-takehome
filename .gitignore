@@ -53,7 +53,9 @@ results/taxonomy/bracken/*.S.bracken.tsv
 results/taxonomy/bracken/*.G.bracken.report
 results/taxonomy/bracken/*.S.bracken.report
 results/taxonomy/merged/*_counts.tsv
+results/summary/*.tsv
 
 # Misc
 *.log
 notes.md
+takehome_notebook_outline.md

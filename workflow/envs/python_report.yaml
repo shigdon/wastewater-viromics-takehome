@@ -1,0 +1,19 @@
+name: python_report
+channels:
+  - conda-forge
+  - bioconda
+defaults:
+dependencies:
+  - python=3.9
+  - pandas
+  - numpy
+  - jupyterlab
+  - nbconvert
+  - nbformat
+  - matplotlib
+  - seaborn
+  - plotly
+  - scipy
+  - scikit-learn
+  - statsmodels
+  - samtools
